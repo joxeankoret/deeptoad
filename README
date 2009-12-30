@@ -1,0 +1,15 @@
+What is deeptoad?
+=================
+
+"Deeptoad" is a (python) library and a tool to clusterize similar files using fuzzy
+hashing techniques. This project is inspired by the well known tool ssdeep.
+
+Links
+=====
+
+Project Page:
+http://code.google.com/p/deeptoad
+
+Wiki:
+http://code.google.com/p/deeptoad/w/list
+
