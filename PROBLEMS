@@ -8,7 +8,7 @@ size and signature's size, for medium size files the defaults are OK and, for
 size to a bigger value (in example, 64 bits).
 
 It's planned to do, in the future, the calculation automatically but, as it's 
-more flexible as is. Well, I need to think about...
+more flexible as is, I need to think about...
 
 --
 Joxean Koret
