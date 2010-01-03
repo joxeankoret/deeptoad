@@ -77,6 +77,7 @@ class CDeepToad:
         except:
             sys.stderr.write(" -> %s\n" % str(sys.exc_info()[1]))
             sys.stderr.flush()
+            raise
 
     def clusterDirectory(self, path, output_dir):
         last_size = 0
@@ -151,20 +152,18 @@ class CDeepToad:
             elif finished:
                 break
             
-            if hx not in hashesy:
-                continue
+            #if hx not in hashesy:
+            #    continue
             
             for hy in hashesy:
                 if hy == "":
                     continue
                 
                 dis = self.kfd.edit_distance(hx, hy)
+                dis = len(hx) - dis
+                percent = dis*100.00/len(hx)
                 
-                if dis == 0 or dis < len(hx)/3:
-                    if dis != 0:
-                        percent = len(hx)*100.00/dis
-                    else:
-                        percent = 100
+                if percent > 33:
                     print "File '%s' matches '%s' (%0.2f%%)" % (x, y, percent)
                     dones[y] = x
                     finished = True

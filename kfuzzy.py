@@ -147,6 +147,12 @@ class CKoretFuzzyHashing:
         ret = "".join(ret)
         return base64.b64encode(ret).strip("=")[:output_size]
 
+    def xor(self, bytes):
+        ret = 0
+        for byte in bytes:
+            ret ^= byte
+        return ret
+
     def _experimental_hash(self, bytes, aggresive = False):
         idx = 0
         ret = []
@@ -167,8 +173,12 @@ class CKoretFuzzyHashing:
                 val = output_size
             
             buf = bytes[chunk_size:chunk_size+val]
-            byte = chr(sum(imap(ord, buf)) % 255)
-            ret.append(byte)
+            byte = self.xor(imap(ord, buf)) % 255
+            byte = chr(byte)
+            
+            if byte != '\xff' and byte != '\x00':
+                ret.append(byte)
+            
             idx += 1
         
         ret = "".join(ret)
