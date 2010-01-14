@@ -18,12 +18,12 @@ class TestKFuzzy(unittest.TestCase):
 
     def testDHA(self):
         """ Default hashing algorithm (DHA) """
-        key = "AgL7+wQE+fkGBvf3CAj19QoK8/MMDPHx;BAQGBggICgoMDA4OEBASEhQUFhYYGBoa;+/v5+ff39fXz8/Hx7+/t7evr6enn5+Xl"
+        key = "AgIEBAQEBgYGBggICAgKCgoKDAwMDA4O;BAQGBggICgoMDA4OEBASEhQUFhYYGBoa;+/v5+ff39fXz8/Hx7+/t7evr6enn5+Xl"
         hash = self.kfd.hash_bytes(self.buf)
         self.assert_(key == hash)
 
     def testFHA(self):
-        key = "AgQGCAoMDhASFBYYGhweIN/h4+Xn6evt;AgQGCAoMDhASFBYYGhweICIkJigqLC4w;vb/Bw8XHycvNz9HT1dfZ293f4ePl5+nr"
+        key = "IAIEBggKDA4QEhQWGBocHg;AgQGCAoMDhASFBYYGhweICIkJigqLC4w;vb/Bw8XHycvNz9HT1dfZ293f4ePl5+nr"
         self.kfd.algorithm = self.kfd._fast_hash
         hash = self.kfd.hash_bytes(self.buf)
         self.assert_(key == hash)

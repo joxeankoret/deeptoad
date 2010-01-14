@@ -268,6 +268,10 @@ def main(args):
             kfdCluster.just_print = True
         elif arg == "-ida":
             kfdCluster.ignore_extensions = [".idb", ".id0", ".id1", ".til", ".nam"]
+        elif arg == "-spam":
+            kfdCluster.kfd.remove_spaces = True
+        elif arg == "-dspam":
+            kfdCluster.kfd.remove_spaces = True
         elif arg.startswith("-echo"):
             print arg[6:]
             print "="*len(arg[6:])
@@ -285,6 +289,8 @@ def usage():
     print "   -m=<value>        Clusterize a maximum of <value> file(s)"
     print "   -d=<distance>     Specify the maximum edit distance (by default, 16 or 33%)"
     print "   -ida              Ignore files created by IDA"
+    print "   -spam             Enable spam mode (remove space characters)"
+    print "   -dspam            Disable spam mode"
     print "   -p                Just print the generated hashes"
     print "   -c                Compare the files"
     print "   -echo=<msg>       Print a message (usefull to generate reports)"
