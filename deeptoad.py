@@ -45,6 +45,7 @@ class CDeepToad:
         self.kfd.bsize = 512
         self.kfd.output_size = 32
         self.kfd.ignore_range = 2
+        self.kfd.big_file_size = 1024*1024*32
 
     def cluster(self, hashes, filename):
         if self.just_print or self.just_compare:
@@ -71,7 +72,10 @@ class CDeepToad:
     def hashFile(self, filename):
         try:
             s1, s2, s3 = self.kfd.hash_file(filename, self.aggresive).split(";")
-            self.cluster((s1, s2, s3), filename)
+            if self.just_print:
+                print "%s;%s;%s;%s" % (s1, s2, s3, filename)
+            else:
+                self.cluster((s1, s2, s3), filename)
         except KeyboardInterrupt:
             raise
         except:
@@ -79,9 +83,15 @@ class CDeepToad:
             sys.stderr.flush()
             raise
 
+    def printReportHeader(self):
+        print "Signature;Simple Signature;Reverse Signature;Filename"
+    
     def clusterDirectory(self, path, output_dir):
         last_size = 0
         total = 0
+        if self.just_print:
+            self.printReportHeader()
+        
         for root, dirs, files in os.walk(path):
             for name in files:
                 if self.maximum != 0 and total >= self.maximum:
@@ -95,11 +105,13 @@ class CDeepToad:
                     if extension not in self.extensions:
                         continue
                 
-                sys.stderr.write("\b"*last_size + " "*last_size + "\b"*last_size)
-                sys.stderr.flush()
-                sys.stderr.write("Processing file %s ..." % os.path.join(root, name))
-                last_size = len("Processing file %s ..." % os.path.join(root, name))
-                sys.stderr.flush()
+                if not self.just_print:
+                    sys.stderr.write("\b"*last_size + " "*last_size + "\b"*last_size)
+                    sys.stderr.flush()
+                    sys.stderr.write("Processing file %s ..." % os.path.join(root, name))
+                    last_size = len("Processing file %s ..." % os.path.join(root, name))
+                    sys.stderr.flush()
+                
                 self.hashFile(os.path.join(root, name))
             
             if self.maximum != 0 and total >= self.maximum:
@@ -138,7 +150,7 @@ class CDeepToad:
         return outgrp
 
     def printHashes(self):
-        print "Signature;Simple Signature;Reverse Signature;Filename"
+        self.printReportHeader()
         for x in self.groups:
             hashes = self.groups[x]
             print "%s;%s;%s;%s" % (hashes[0], hashes[1], hashes[2], x)
@@ -190,7 +202,7 @@ class CDeepToad:
 
     def printReport(self):
         if self.just_print:
-            self.printHashes()
+            #self.printHashes()
             return
         
         if self.just_compare:
