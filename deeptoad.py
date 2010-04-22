@@ -36,7 +36,7 @@ class CDeepToad:
     ignore_extensions = []
     edit_distance = MAX_EDIT_DISTANCE
     maximum = 0
-    aggresive = True
+    aggresive = False
     just_print = False
     just_compare = False
 

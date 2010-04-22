@@ -4,7 +4,7 @@ Known Problems
 Right know, the unique problem I found is with the generated signature's output
 and with the block size. That's: For small files you should use a small block
 size and signature's size, for medium size files the defaults are OK and, for 
-"somewhat" big files (more than 5MB) you should change the signature's output 
+"somewhat" big files (more than 32MB) you should change the signature's output 
 size to a bigger value (in example, 64 bits).
 
 It's planned to do, in the future, the calculation automatically but, as it's 
