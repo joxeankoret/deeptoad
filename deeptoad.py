@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 import os
 import sys
+import shutil
 
 from kfuzzy import CKoretFuzzyHashing
 
@@ -29,23 +30,23 @@ PROGRAM = "DeepToad"
 VERSION = "1.0"
 
 class CDeepToad:
-    groups = {}
-    ingroups = {}
-    kfd = None
-    extensions = []
-    ignore_extensions = []
-    edit_distance = MAX_EDIT_DISTANCE
-    maximum = 0
-    aggresive = False
-    just_print = False
-    just_compare = False
-
     def __init__(self):
         self.kfd = CKoretFuzzyHashing()
         self.kfd.bsize = 512
         self.kfd.output_size = 32
         self.kfd.ignore_range = 2
         self.kfd.big_file_size = 1024*1024*32
+        
+        self.groups = {}
+        self.ingroups = {}
+        self.extensions = []
+        self.ignore_extensions = []
+        self.edit_distance = MAX_EDIT_DISTANCE
+        self.maximum = 0
+        self.aggresive = False
+        self.just_print = False
+        self.just_compare = False
+        self.output_dir = None
 
     def cluster(self, hashes, filename):
         if self.just_print or self.just_compare:
@@ -216,6 +217,36 @@ class CDeepToad:
                 if element not in already:
                     print "%s;%s" % (x, element)
                     already.append(element)
+    
+    def copySamples(self, out_dir):
+        if not os.path.exists(out_dir):
+            os.mkdir(out_dir)
+        
+        base_dir_name = "set"
+        sets = {}
+        i = 1
+        
+        grp = self.sortByCount()
+        already = []
+        for x in grp:
+            for element in self.groups[x]:
+                if element not in already:
+                    if not sets.has_key(x):
+                        tmp = base_dir_name + str(i)
+                        i += 1
+                        tmp = os.path.join(self.output_dir, tmp)
+                        os.mkdir(tmp)
+                        sets[x] = tmp
+                    
+                    new_path = sets[x]
+                    
+                    basefile = os.path.basename(element)
+                    new_path = os.path.join(new_path, basefile)
+                    
+                    shutil.copy(element, new_path)
+                    #print ("Moving %s to %s" % (element, new_path))
+                    #print "%s;%s" % (x, element)
+                    already.append(element)
 
 def main(args):
     output_dir = None
@@ -230,7 +261,10 @@ def main(args):
                 except KeyboardInterrupt:
                     print "Aborted..."
                 
-                kfdCluster.printReport()
+                if output_dir is None:
+                    kfdCluster.printReport()
+                else:
+                    kfdCluster.copySamples(output_dir)
             else:
                 try:
                     ret = kfdCluster.kfd.hash_file(arg)
@@ -239,6 +273,7 @@ def main(args):
                     print "Aborted..."
         elif arg.startswith("-o"):
             output_dir = arg[3:]
+            kfdCluster.output_dir = output_dir
         elif arg.startswith("-e="):
             extensions = arg[3:].split(",")
             kfdCluster.ignore_extensions = extensions
@@ -295,7 +330,7 @@ def usage():
     print "Usage:", sys.argv[0], "[parameters] <directory>"
     print
     print "Common parameters:"
-    print "   -o=<directory>    Not yet implemented"
+    print "   -o=<directory>    Copy samples grouped by similarity to directory <directory>"
     print "   -e=<extensions>   Exclude extensions (separated by comma)"
     print "   -i=<extensions>   Clusterize only specified extensions (separated by comma)"
     print "   -m=<value>        Clusterize a maximum of <value> file(s)"
