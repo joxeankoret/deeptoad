@@ -82,7 +82,6 @@ class CDeepToad:
         except:
             sys.stderr.write(" -> %s\n" % str(sys.exc_info()[1]))
             sys.stderr.flush()
-            raise
 
     def printReportHeader(self):
         print "Signature;Simple Signature;Reverse Signature;Filename"
