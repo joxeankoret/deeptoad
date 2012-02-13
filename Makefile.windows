@@ -1,0 +1,20 @@
+PYLIB = c:\python27\libs
+PYINC = c:\Python27\include
+CLIB = .
+
+
+_fasttoad_wrap.pyd: fasttoad_wrap.o $(CLIB)/fasttoad.o
+	gcc -shared fasttoad_wrap.o $(CLIB)/fasttoad.o -L$(PYLIB) -lpython27 -o $@
+
+fasttoad_wrap.o:fasttoad_wrap.c $(CLIB)/fasttoad.h
+	gcc fasttoad_wrap.c -shared -g -I$(CLIB) -I$(PYINC) -I. -c -o $@
+
+fasttoad_wrap.c: fasttoad.i
+	swig -python fasttoad.i
+
+$(CLIB)/fasttoad.o: $(CLIB)/fasttoad.c $(CLIB)/fasttoad.h
+	gcc $(CLIB)/fasttoad.c -g -shared -I$(PYINC) -I. -c -o fasttoad.o
+
+clean:
+	del fasttoad_wrap.c fasttoad.py _fasttoad_wrap.pyd
+	
