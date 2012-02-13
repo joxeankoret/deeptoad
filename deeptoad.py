@@ -46,6 +46,7 @@ class CDeepToad:
         self.aggresive = False
         self.just_print = False
         self.just_compare = False
+        self.print_similars = False
         self.output_dir = None
 
     def cluster(self, hashes, filename):
@@ -70,11 +71,19 @@ class CDeepToad:
             
             self.groups[hash].append(filename)
 
+    def compareSimilars(self, hashes, filename):
+        for line in open(self.similars_file, "rb").readlines():
+            line = line.strip("\r").strip("\n")
+            similar_hases = line.split(";")
+            print similar_hashes
+
     def hashFile(self, filename):
         try:
             s1, s2, s3 = self.kfd.hash_file(filename, self.aggresive).split(";")
             if self.just_print:
                 print "%s;%s;%s;%s" % (s1, s2, s3, filename)
+            elif self.print_similars:
+                self.compareSimilars((s1, s2, s3), filename)
             else:
                 self.cluster((s1, s2, s3), filename)
         except KeyboardInterrupt:
@@ -294,6 +303,11 @@ def main(args):
         elif arg.startswith("-s="):
             value = int(arg[3:])
             kfdCluster.kfd.output_size = value
+            """
+        elif arg.startswith("-hf="):
+            value = arg[4:]
+            kfdCluster.print_similars = True
+            kfdCluster.similars_file = value"""
         elif arg == "-c":
             kfdCluster.just_compare = True
         elif arg == "-f":
@@ -352,6 +366,7 @@ def usage():
     print "   -ag               Use aggresive method (default)"
     print "   -nb               Ignore null blocks (default)"
     print "   -cb               Consider null blocks"
+    #print "   -hf=<file>        Compare files against hashes stored in the specified file"
     print
     print "Example:"
     print

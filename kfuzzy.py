@@ -26,6 +26,12 @@ import base64
 from itertools import imap
 
 try:
+    from fasttoad_wrap import modsum
+except:
+    def modsum(buf):
+        return sum(imap(ord, buf)) % 255
+
+try:
     import psyco
     psyco.full()
 except ImportError:
@@ -115,13 +121,14 @@ class CKoretFuzzyHashing:
             #print "pre"
             buf = bytes[chunk_size:chunk_size+bsize]
             #print "post"
-            char = sum(imap(ord, buf)) % 255
-            
+            char = modsum(buf)
+
             if reduce_errors:
                 if char != 255 and char != 0:
                     rappend(chr(char))
             else:
                 rappend(chr(char))
+
             
             idx += 1
             
