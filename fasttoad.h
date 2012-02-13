@@ -1,0 +1,1 @@
+unsigned char modsum(unsigned char * data, int size);
